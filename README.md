@@ -32,8 +32,11 @@ Scripts are sorted according to the output panels from each figures in the paper
 #----------------Adjust dataSource and saveDir path------------------------
 
 #Input folder (SpaethBahugunaData) or file (Source_Data)
+
 dataDir = 'path/SpaethBahugunaData'
+
 OR
+
 file = 'path/Source_Data_Spaeth_Bahuguna_et_al.xlsx'
 
 #Savedir 
