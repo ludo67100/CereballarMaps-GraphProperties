@@ -40,7 +40,8 @@ file = 'path/Source_Data_Spaeth_Bahuguna_et_al.xlsx'
 saveDir =  'where to save plots and sheets on your machine'
 
 #--------------------------The code----------------------------------------
-You should not modify parameters here in order to reproduce the panels shown in the paper. 
+
+You should not modify parameters below in order to reproduce the panels shown in the paper. 
 
 Each scripts performs calculations and displays panels from Figure 2a-b-d, 3a-c-d, 4a-b-c-e-f.  
 
