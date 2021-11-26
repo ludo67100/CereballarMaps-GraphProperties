@@ -28,6 +28,9 @@ rule all:
 	input:
 		DATA_TARGET_DIR+"meta_data.csv",
 		DATA_TARGET_DIR+"data_2d_maps.pickle",
+		DATA_TARGET_DIR+"meta_data_days.csv",
+		DATA_TARGET_DIR+"data_2d_maps_days.pickle",	
+
 		expand(DATA_TARGET_DIR+"covariance_maps_norm_{seed}.pickle",seed=SEEDS),
 		expand(FIG_TARGET_DIRS[0]+"corr_maps_rearranged_{st}_norm_{seed}.png",st=SUBTYPES,seed=seed_plot),
 		expand(DATA_TARGET_DIR+"graph_properties_norm_{seed}.pickle",seed=SEEDS)
@@ -62,6 +65,15 @@ rule calc_graph_features_adaptive:
 		expand(DATA_TARGET_DIR+"graph_properties_norm_{seed}.pickle",seed=SEEDS)
 	run:
 		shell("python ./common/plot_correlation_maps_calculate_graph_features_adaptive.py {seed}".format(seed=seed_plot))
+
+rule read_data_development:
+	input:
+		INPUT_DIR+"Development_Dataset/",
+	output:
+		DATA_TARGET_DIR+"meta_data_days.csv",
+		DATA_TARGET_DIR+"data_2d_maps_days.pickle"	
+	run:
+		shell("python ./common/read_data_development.py")
 
 
 
