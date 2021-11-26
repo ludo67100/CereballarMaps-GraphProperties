@@ -18,6 +18,7 @@ Each script was tested and built with an IPython console from Spyder (python 3.6
 -neo
 -openpyxl
 
+
 # Input Data
 Raw and pre-processed synaptic maps are available below:
 Ludovic Spaeth, Jyotika Bahuguna, Demian Battaglia, & Philippe Isope. (2021). GC-PC_Cerebellar_Connectivity _Maps [Data set]. Zenodo. https://doi.org/10.5281/zenodo.5714670
