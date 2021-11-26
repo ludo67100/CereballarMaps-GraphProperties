@@ -11,8 +11,43 @@ OPTIONS = ["n","y"]
 POSTFIX = ["","_sub_ipsi_contra"]
 INPUT_DIR = "../SpaethBahugunaData/ProcessedData/"
 
+
+# Uncomment the lower two lines for the first time. Once the seeds are generated, its better to comment and use the seeds generated
+#========================================================================== 
 #SEEDS = list(np.random.randint(1,99999999,20))
 #pickle.dump(SEEDS,open(DATA_TARGET_DIR+"seeds.pickle","wb"))
+
 SEEDS = list(pickle.load(open(DATA_TARGET_DIR+"seeds.pickle","rb")))[:5]
 print(SEEDS)
+
+
+rule all:
+	input:
+		DATA_TARGET_DIR+"meta_data.csv",
+		DATA_TARGET_DIR+"data_2d_maps.pickle",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rule read_data_adaptive:
+	input:
+		INPUT_DIR+"Adaptive_Dataset/",
+	output:
+		DATA_TARGET_DIR+"meta_data.csv",
+		DATA_TARGET_DIR+"data_2d_maps.pickle",
+	run:
+		shell("python ./common/read_data.py")
 
