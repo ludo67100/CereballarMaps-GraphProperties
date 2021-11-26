@@ -1,0 +1,18 @@
+from itertools import combinations, product
+import numpy as np
+import re
+import pickle
+
+DATA_TARGET_DIR = "data/"
+FIG_TARGET_DIR = "figs/"
+SUBTYPES = ["EC","ENR1","ENR2","ES","LC","LS","WT"]
+DEVELOPMENT =["P9P10","P12P13","P14P18","P30P40"]
+OPTIONS = ["n","y"]
+POSTFIX = ["","_sub_ipsi_contra"]
+INPUT_DIR = "../SpaethBahugunaData/ProcessedData/"
+
+#SEEDS = list(np.random.randint(1,99999999,20))
+#pickle.dump(SEEDS,open(DATA_TARGET_DIR+"seeds.pickle","wb"))
+SEEDS = list(pickle.load(open(DATA_TARGET_DIR+"seeds.pickle","rb")))[:5]
+print(SEEDS)
+
