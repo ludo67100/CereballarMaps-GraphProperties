@@ -18,13 +18,13 @@ Each script was tested and built with an IPython console from Spyder (python 3.6
 -neo
 -openpyxl
 
-# Dataset
+# Input Data
 Raw and pre-processed synaptic maps are available below:
 Ludovic Spaeth, Jyotika Bahuguna, Demian Battaglia, & Philippe Isope. (2021). GC-PC_Cerebellar_Connectivity _Maps [Data set]. Zenodo. https://doi.org/10.5281/zenodo.5714670
 
-# Source Data
-see Source_Data_Spaeth_Bahuguna_et_al.xlsx on journal's page 
+Download and unzip SpaethBahugunaData.zip - set this file as DataDir in scripts from Synaptic_Maps_and_Behavior
 
+DataSource : Source_Data_Spaeth_Bahuguna_et_al.xlsx
 
 # Scripts
 Scripts are sorted according to the output panels from each figures in the paper.
