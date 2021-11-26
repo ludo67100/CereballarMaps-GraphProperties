@@ -29,18 +29,26 @@ DataSource : Source_Data_Spaeth_Bahuguna_et_al.xlsx
 # Scripts - Synaptic Maps and Behavior
 Scripts are sorted according to the output panels from each figures in the paper. Tu run a script, open it in any python-based script editor (e.g. Spyder). Please specify the path to the dataset mentionned at the top of each script (i.e. the location where you saved the SpaethBahugunaData folder and DataSource file on your machine): 
 
-#-------------------------------------------------------------------------------
-#---------------------Adjust dataSource and saveDir path------------------------
+#--------------------------------------------------------------------------
+#----------------Adjust dataSource and saveDir path------------------------
 
-#Input folder
-dataDir = 'C:/Users/klab/Documents/SpaethBahugunaData/ProcessedData/Development_Dataset'
+#Input folder (SpaethBahugunaData) or file (Source_Data)
+dataDir = 'path/SpaethBahugunaData'
+OR
+file = 'path/Source_Data_Spaeth_Bahuguna_et_al.xlsx'
 
 #Savedir 
-saveDir =  'C:/Users/klab/Desktop/testOutput'
+saveDir =  'where to save plots and sheets on your machine'
 
-#-------------------------------------------------------------------------------
-#-------------------------------The code----------------------------------------
+#--------------------------------------------------------------------------
+#--------------------------The code----------------------------------------
 You should not modify parameters here in order to reproduce the panels shown in the paper. 
+
+Each scripts performs calculations and displays panels from Figure 2a-b-d, 3a-c-d, 4a-b-c-e-f.  
+
+Random Forest in Figure 5c was built with an Orange Data Mining (ODM) workflow. ODM can be installed via Anaconda Navigator or from here: https://orangedatamining.com/
+Simply open tSNE_RF_Synaptic_Params_zonewise_Segregated_Training_5B.ows in ODM and set Avg_Amplitude_Active_Sites_STR-LTR-segregated.xlsx as input data. 
+
 
 # Scripts - GraphProperties
 Please specify the path to the dataset mentionned at the top of each script (i.e. the location where you saved the SpaethBahugunaData folder and DataSource file on your machine). Present assumption is current directory.
