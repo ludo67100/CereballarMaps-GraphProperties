@@ -2,9 +2,11 @@ from itertools import combinations, product
 import numpy as np
 import re
 import pickle
+import random
 
-DATA_TARGET_DIR = "data/"
-FIG_TARGET_DIR = "figs/"
+
+DATA_TARGET_DIR = "./data/"
+FIG_TARGET_DIRS = ["./Figure1/"]
 SUBTYPES = ["EC","ENR1","ENR2","ES","LC","LS","WT"]
 DEVELOPMENT =["P9P10","P12P13","P14P18","P30P40"]
 OPTIONS = ["n","y"]
@@ -17,20 +19,18 @@ INPUT_DIR = "../SpaethBahugunaData/ProcessedData/"
 #SEEDS = list(np.random.randint(1,99999999,20))
 #pickle.dump(SEEDS,open(DATA_TARGET_DIR+"seeds.pickle","wb"))
 
-SEEDS = list(pickle.load(open(DATA_TARGET_DIR+"seeds.pickle","rb")))[:5]
+SEEDS = list(pickle.load(open(DATA_TARGET_DIR+"seeds.pickle","rb")))[:5] # For full simulation run for all seeds
 print(SEEDS)
 
+seed_plot = random.sample(list(SEEDS),1)[0]
 
 rule all:
 	input:
 		DATA_TARGET_DIR+"meta_data.csv",
 		DATA_TARGET_DIR+"data_2d_maps.pickle",
-
-
-
-
-
-
+		expand(DATA_TARGET_DIR+"covariance_maps_norm_{seed}.pickle",seed=SEEDS),
+		expand(FIG_TARGET_DIRS[0]+"corr_maps_rearranged_{st}_norm_{seed}.png",st=SUBTYPES,seed=seed_plot),
+		expand(DATA_TARGET_DIR+"graph_properties_norm_{seed}.pickle",seed=SEEDS)
 
 
 
@@ -50,4 +50,18 @@ rule read_data_adaptive:
 		DATA_TARGET_DIR+"data_2d_maps.pickle",
 	run:
 		shell("python ./common/read_data_adaptive.py")
+
+
+rule calc_graph_features_adaptive:
+	input:
+		DATA_TARGET_DIR+"meta_data.csv",
+		DATA_TARGET_DIR+"data_2d_maps.pickle",
+	output:
+		expand(DATA_TARGET_DIR+"covariance_maps_norm_{seed}.pickle",seed=SEEDS),
+		expand(FIG_TARGET_DIRS[0]+"corr_maps_rearranged_{st}_norm_{seed}.png",st=SUBTYPES,seed=seed_plot),
+		expand(DATA_TARGET_DIR+"graph_properties_norm_{seed}.pickle",seed=SEEDS)
+	run:
+		shell("python ./common/plot_correlation_maps_calculate_graph_features_adaptive.py {seed}".format(seed=seed_plot))
+
+
 
