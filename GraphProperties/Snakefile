@@ -49,5 +49,5 @@ rule read_data_adaptive:
 		DATA_TARGET_DIR+"meta_data.csv",
 		DATA_TARGET_DIR+"data_2d_maps.pickle",
 	run:
-		shell("python ./common/read_data.py")
+		shell("python ./common/read_data_adaptive.py")
 
