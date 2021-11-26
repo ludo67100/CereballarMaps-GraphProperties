@@ -13,7 +13,7 @@ Console output is redirected to the saveDir
 #---------------------Adjust dataSource and saveDir path------------------------
 
 #Input folder
-dataSource = 'C:/Users/klab/Documents/SpaethBahugunaData/ProcessedData/Development_Dataset'
+dataDir = 'C:/Users/klab/Documents/SpaethBahugunaData'
 
 #Savedir 
 saveDir =  'C:/Users/klab/Desktop/testOutput'
@@ -48,6 +48,8 @@ pairs= [("P9P10", "P12P13"), ("P9P10", "P14P18"), ("P9P10", "P30P40"), ("P12P13"
 #Target file type
 fileType = 'Amp_2D_OK.csv'
 zscoreFileType = 'Amp_zscore_2D_OK.csv'
+
+dataSource = '{}/ProcessedData/Development_Dataset'.format(dataDir)
 
 #Redirect console output to a txt file instead of console 
 sys.stdout = open('{}/Fig2A_Statistics.txt'.format(saveDir),'w')
