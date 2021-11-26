@@ -29,7 +29,6 @@ DataSource : Source_Data_Spaeth_Bahuguna_et_al.xlsx
 # Scripts - Synaptic Maps and Behavior
 Scripts are sorted according to the output panels from each figures in the paper. Tu run a script, open it in any python-based script editor (e.g. Spyder). Please specify the path to the dataset mentionned at the top of each script (i.e. the location where you saved the SpaethBahugunaData folder and DataSource file on your machine): 
 
-#--------------------------------------------------------------------------
 #----------------Adjust dataSource and saveDir path------------------------
 
 #Input folder (SpaethBahugunaData) or file (Source_Data)
@@ -40,7 +39,6 @@ file = 'path/Source_Data_Spaeth_Bahuguna_et_al.xlsx'
 #Savedir 
 saveDir =  'where to save plots and sheets on your machine'
 
-#--------------------------------------------------------------------------
 #--------------------------The code----------------------------------------
 You should not modify parameters here in order to reproduce the panels shown in the paper. 
 
