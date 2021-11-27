@@ -22,7 +22,8 @@ INPUT_DIR = "../SpaethBahugunaData/ProcessedData/"
 SEEDS = list(pickle.load(open(DATA_TARGET_DIR+"seeds.pickle","rb")))[:5] # For full simulation run for all seeds
 print(SEEDS)
 
-seed_plot = random.sample(list(SEEDS),1)[0]
+#seed_plot = random.sample(list(SEEDS),1)[0]
+seed_plot = SEEDS[0]
 
 rule all:
 	input:
@@ -33,7 +34,11 @@ rule all:
 
 		expand(DATA_TARGET_DIR+"covariance_maps_norm_{seed}.pickle",seed=SEEDS),
 		expand(FIG_TARGET_DIRS[0]+"corr_maps_rearranged_{st}_norm_{seed}.png",st=SUBTYPES,seed=seed_plot),
-		expand(DATA_TARGET_DIR+"graph_properties_norm_{seed}.pickle",seed=SEEDS)
+		expand(DATA_TARGET_DIR+"graph_properties_norm_{seed}.pickle",seed=SEEDS),
+
+		expand(DATA_TARGET_DIR+"covariance_maps_days_norm_{seed}.pickle",seed=SEEDS),
+		expand(DATA_TARGET_DIR+"graph_properties_days_norm_{seed}.pickle",seed=SEEDS),
+		expand(FIG_TARGET_DIRS[0]+"corr_maps_rearranged_{st}_norm_{seed}.png",st=DEVELOPMENT,seed=seed_plot)
 
 
 
@@ -76,4 +81,15 @@ rule read_data_development:
 		shell("python ./common/read_data_development.py")
 
 
+rule calc_graph_features_development:
+	input:
+		DATA_TARGET_DIR+"data_2d_maps_days.pickle",
+		DATA_TARGET_DIR+"meta_data_days.csv"	
+	output:
+		expand(DATA_TARGET_DIR+"covariance_maps_days_norm_{seed}.pickle",seed=SEEDS),
+		expand(DATA_TARGET_DIR+"graph_properties_days_norm_{seed}.pickle",seed=SEEDS),
+		expand(FIG_TARGET_DIRS[0]+"corr_maps_rearranged_{st}_norm_{seed}.png",st=DEVELOPMENT,seed=seed_plot)
+
+	run:
+		shell("python ./common/plot_correlation_maps_calculate_graph_features_development.py {seed}".format(seed=seed_plot))
 
