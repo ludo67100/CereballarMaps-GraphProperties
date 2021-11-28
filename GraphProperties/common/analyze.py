@@ -24,6 +24,7 @@ from matplotlib.gridspec import GridSpec
 import scipy.stats as sp_st
 from matplotlib.markers import TICKDOWN
 
+import graph_prop_funcs_analyze as graph_anal
 
 gammas = np.arange(0.0,1.5,0.17)
 
@@ -168,4 +169,21 @@ def boxplot_bold_labels(g,g_prop,vline_prop,hline_prop):
     
     
         
+
+
+def convert_map_graph(map_orig,gamma_re_arrange_ind):
+
+    cov_2d = np.cov(map_orig.T)
+    corr_2d = np.corrcoef(map_orig.T,map_orig.T)[:len(cov_2d),:len(cov_2d)]
+    ind_nan = np.where(np.isnan(corr_2d)==True)
+    if len(ind_nan[0]) > 0:
+        ind_nonan = np.where(np.isnan(corr_2d)==False)
+        xlim = (np.min(np.unique(ind_nonan[0])),np.max(np.unique(ind_nonan[0])))
+        ylim = (np.min(np.unique(ind_nonan[1])),np.max(np.unique(ind_nonan[1])))
+        corr_2d = corr_2d[xlim[0]:xlim[1],ylim[0]:ylim[1]]
+
+    gammas,num_mods_corr, mod_index_corr,ci_list_corr = graph_anal.calc_modularity(corr_2d)
+    re_arranged_corr = graph_anal.get_re_arranged_matrix(ci_list_corr[gamma_re_arrange_ind],corr_2d)
+
+    return re_arranged_corr,num_mods_corr,mod_index_corr,ci_list_corr,corr_2d
 

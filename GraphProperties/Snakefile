@@ -81,9 +81,9 @@ rule all:
         FIG_TARGET_DIRS[3]+"Predicted_actual_scatter_jittered_total_distance_n.png",
 
         DATA_TARGET_DIR+"Predicted_actual_scatter_points_lcls_post_op15_n.csv",
-        FIG_TARGET_DIRS[3]+"Predicted_actual_scatter_jittered_post_op15_n.png"
+        FIG_TARGET_DIRS[3]+"Predicted_actual_scatter_jittered_post_op15_n.png",
 
-
+        expand(FIG_TARGET_DIRS[1]+"Graph_{day}.png",day=DEVELOPMENT)
 
 
 
@@ -201,6 +201,16 @@ rule Figure2_panelHIJK:
         expand(FIG_TARGET_DIRS[1]+"Figure2_{N}_development_n.png",N=[ Fig2_panel_name[x] for x in Fig2_panel_name.keys()] )
     run:
         shell("python Figure2/compare_graph_props_subtype_null.py development n")
+
+
+rule Figure2_panelE:
+    input:
+       expand(DATA_TARGET_DIR+"graph_properties_norm_{seed}.pickle",seed=seed_plot) 
+    output:
+       expand(FIG_TARGET_DIRS[1]+"Graph_{day}.png",day=DEVELOPMENT)
+    run:
+       for d in DEVELOPMENT:
+           shell("python Figure2/draw_graph_networkx.py days {st}".format(st=d)) 
 
 
 rule read_data_behavior:
