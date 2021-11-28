@@ -73,9 +73,9 @@ B_ipis : 125 to 285
 '''
 mat_type = "norm"
 
-participation_pos_all = []
-participation_neg_all = []
-mdz_all = []
+#participation_pos_all = []
+#participation_neg_all = []
+#mdz_all = []
 
 # For different seeds, calculate graph properties
 seeds_list = pickle.load(open(data_target_dir+"seeds.pickle","rb"))[:5]
@@ -84,9 +84,43 @@ print(seeds_list)
 seed_plot = int(sys.argv[1])
 print(seed_plot)
 
+
+def store_gp(ci_list_corr,corr_2d,participation_pos_all,participation_neg_all,mdz_all):
+	
+	zscore = []
+	for ci in ci_list_corr:
+
+		zs = graph_anal.calc_module_degree_zscore(corr_2d,ci,True,False)
+		zscore.append(zs)
+		#rc = anal.calc_rich_club_wu(ci) # Rich club also gave nan
+		#rich_club.append(rc)
+	# independent of gammas
+	mdz_all.append(zscore)
+	part_pos, part_neg = graph_anal.calc_participation_coef_sign(corr_2d,ci_list_corr,False,True)
+	participation_pos_all.append(part_pos)
+	participation_neg_all.append(part_neg)
+
+	# re arranging the correlation matroices
+	list_nodes = [ bct.modularity.ci2ls(x1) for x1 in ci_list_corr]
+	loc_assort_pos, loc_assort_neg = graph_anal.calc_local_assortativity_sign(corr_2d)
+
+	return zscore,  part_pos, part_neg,  list_nodes, loc_assort_pos, loc_assort_neg
+
+
+
+
+
+
 for seed in seeds_list[:5]:
     print(seed)
     # Plot the correlation maps for all animals within a subtype and calculate the graph properties for the subtype  
+    participation_pos_all = []
+    participation_neg_all = []
+    mdz_all = []
+
+    participation_pos_all_null = []
+    participation_neg_all_null = []
+    mdz_all_null = []
 
     for st in days:
         data_slice = data.loc[data["days"]==st]
@@ -139,7 +173,7 @@ for seed in seeds_list[:5]:
                 # Find modularity index
                 gammas,num_mods_cov, mod_index_cov,ci_list_cov = graph_anal.calc_modularity(cov_2d)
                 _,num_mods_corr, mod_index_corr,ci_list_corr = graph_anal.calc_modularity(corr_2d)
-               
+                '''               
                 zscore = []
                 for ci in ci_list_corr:
                     zs = graph_anal.calc_module_degree_zscore(corr_2d,ci,True,False)
@@ -152,14 +186,31 @@ for seed in seeds_list[:5]:
 
                 # re arranging the correlation matroices
                 list_nodes = [ bct.modularity.ci2ls(x1) for x1 in ci_list_corr]
-
+           
 
                 re_arranged_corr = graph_anal.get_re_arranged_matrix(ci_list_corr[gamma_re_arrange_ind],corr_2d) 
                 loc_assort_pos, loc_assort_neg = graph_anal.calc_local_assortativity_sign(corr_2d)
+                '''
+                corr_2d_null = bct.randmio_und_signed(corr_2d,5)[0] # This function randomizes an undirected weighted network with positive and negative weights, while simultaneously preserving the degree distribution of positive and negative weights. The function does not preserve the
+
+                cov_2d_dict[st][str(rn)][str(cn)]["corr_null"] = corr_2d_null #+np.nanmin(corr_2d)
+
+                _,num_mods_corr_null, mod_index_corr_null,ci_list_corr_null = graph_anal.calc_modularity(corr_2d_null)
+
+                zscore,  part_pos, part_neg, list_nodes, loc_assort_pos, loc_assort_neg = store_gp(ci_list_corr,corr_2d,participation_pos_all,participation_neg_all,mdz_all)
+                zscore_null,  part_pos_null, part_neg_null, list_nodes_null, loc_assort_pos_null, loc_assort_neg_null = store_gp(ci_list_corr_null,corr_2d_null,participation_pos_all_null,participation_neg_all_null,mdz_all_null)
+
+                re_arranged_corr = graph_anal.get_re_arranged_matrix(ci_list_corr[gamma_re_arrange_ind],corr_2d) 
+                re_arranged_corr_null = graph_anal.get_re_arranged_matrix(ci_list_corr_null[gamma_re_arrange_ind],corr_2d_null) 
+
 
                 graph_properties[st]["modularity"][i]["cov"] = (mod_index_cov,num_mods_cov)
                 graph_properties[st]["modularity"][i]["corr"] = (mod_index_corr,num_mods_corr)
-                graph_properties[st]["modularity"][i]["rearranged_corr"] = re_arranged_corr 
+                graph_properties[st]["modularity"][i]["corr_null"] = (mod_index_corr_null,num_mods_corr_null)
+                graph_properties[st]["modularity"][i]["mod_list"] = ci_list_corr
+                graph_properties[st]["modularity"][i]["mod_list_null"] = ci_list_corr_null
+                graph_properties[st]["modularity"][i]["rearranged_corr"] = re_arranged_corr
+                graph_properties[st]["modularity"][i]["rearranged_corr_null"] = re_arranged_corr_null
                 graph_properties[st]["modularity"][i]["norm"] = np.linalg.norm(corr_2d) 
                 graph_properties[st]["modularity"][i]["total_amplitude"] = np.abs(tot_amplitude)*0.01 # pA
                 graph_properties[st]["modularity"][i]["average_amplitude"] = np.abs(avg_amplitude)*0.01 # pA
@@ -182,42 +233,69 @@ for seed in seeds_list[:5]:
 
                 # Participation coefficient of all nodes in the graph (whole graph participation coefficient is median of these distributions)
                 graph_properties[st]["modularity"][i]["participation_whole"] = (np.median(part_pos,axis=1),np.median(part_neg,axis=1))
+                graph_properties[st]["modularity"][i]["participation_whole_null"] = (np.median(part_pos_null,axis=1),np.median(part_neg_null,axis=1))
+
 
                 # Participation coefficient on the hemisphere resolution - ipsilateral and contralateral
                 if len(data_2d[st][str(rn)][str(cn)]["ind_ipsi"]) > 0:
                     part_pos_ipsi = np.array(part_pos)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_ipsi"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_ipsi"])]
                     part_neg_ipsi = np.array(part_neg)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_ipsi"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_ipsi"])]
                     graph_properties[st]["modularity"][i]["participation_ipsi"] = (np.median(part_pos_ipsi,axis=1),np.median(part_neg_ipsi,axis=1))
+
+                    part_pos_ipsi_null = np.array(part_pos_null)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_ipsi"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_ipsi"])]
+                    part_neg_ipsi_null = np.array(part_neg_null)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_ipsi"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_ipsi"])]
+                    graph_properties[st]["modularity"][i]["participation_ipsi_null"] = (np.median(part_pos_ipsi_null,axis=1),np.median(part_neg_ipsi_null,axis=1))
+
+
                 if len(data_2d[st][str(rn)][str(cn)]["ind_contra"]) > 0:
                     part_pos_contra = np.array(part_pos)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_contra"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_contra"])]
                     part_neg_contra = np.array(part_neg)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_contra"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_contra"])]
                     graph_properties[st]["modularity"][i]["participation_contra"] = (np.median(part_pos_contra,axis=1),np.median(part_neg_contra,axis=1))
 
+                    part_pos_contra_null = np.array(part_pos_null)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_contra"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_contra"])]
+                    part_neg_contra_null = np.array(part_neg_null)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_contra"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_contra"])]
+                    graph_properties[st]["modularity"][i]["participation_contra_null"] = (np.median(part_pos_contra_null,axis=1),np.median(part_neg_contra_null,axis=1))
 
 			    # local assortativity for all nodes in the graph (whole graph local assortativity is median of these dsitributions)
 
                 graph_properties[st]["modularity"][i]["local_assortativity_whole"] = (np.median(loc_assort_pos))
+                graph_properties[st]["modularity"][i]["local_assortativity_whole_null"] = (np.median(loc_assort_pos_null))
+
                 #local assortativity on the hemisphere resolution - ipsilateral and contralateral
 
                 if len(data_2d[st][str(rn)][str(cn)]["ind_ipsi"]) > 0:
                     lim1 = np.min([len(loc_assort_pos),np.min(data_2d[st][str(rn)][str(cn)]["ind_ipsi"])])
                     lim2 = np.min([len(loc_assort_pos),np.max(data_2d[st][str(rn)][str(cn)]["ind_ipsi"])])
                     graph_properties[st]["modularity"][i]["local_assortativity_ipsi"] = (np.median(loc_assort_pos[lim1:lim2]))
+                    lim1n = np.min([len(loc_assort_pos_null),np.min(data_2d[st][str(rn)][str(cn)]["ind_ipsi"])])
+                    lim2n = np.min([len(loc_assort_pos_null),np.max(data_2d[st][str(rn)][str(cn)]["ind_ipsi"])])
+                    graph_properties[st]["modularity"][i]["local_assortativity_ipsi_null"] = (np.median(loc_assort_pos_null[lim1n:lim2n]))
+
+
                 if len(data_2d[st][str(rn)][str(cn)]["ind_contra"]) > 0:
                     lim1 = np.min([len(loc_assort_pos),np.min(data_2d[st][str(rn)][str(cn)]["ind_contra"])])
                     lim2 = np.min([len(loc_assort_pos),np.max(data_2d[st][str(rn)][str(cn)]["ind_contra"])])
                     graph_properties[st]["modularity"][i]["local_assortativity_contra"] = (np.median(loc_assort_pos[lim1:lim2]))
+                    lim1n = np.min([len(loc_assort_pos_null),np.min(data_2d[st][str(rn)][str(cn)]["ind_contra"])])
+                    lim2n = np.min([len(loc_assort_pos_null),np.max(data_2d[st][str(rn)][str(cn)]["ind_contra"])])
+                    graph_properties[st]["modularity"][i]["local_assortativity_contra_null"] = (np.median(loc_assort_pos_null[lim1n:lim2n]))
 
                 # Module degree zscore for all nodes in the graph (whole graph module degree zscore is median of these distributions)
 
                 graph_properties[st]["modularity"][i]["module_degree_zscore_whole"] = np.median(zscore,axis=1)
+                graph_properties[st]["modularity"][i]["module_degree_zscore_whole_null"] = np.median(zscore_null,axis=1)
+
                 if len(data_2d[st][str(rn)][str(cn)]["ind_ipsi"]) > 0:
                     zscore_ipsi = np.array(zscore)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_ipsi"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_ipsi"])]
                     graph_properties[st]["modularity"][i]["module_degree_zscore_ipsi"] = np.median(zscore_ipsi,axis=1)
+                    zscore_ipsi_null = np.array(zscore_null)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_ipsi"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_ipsi"])]
+                    graph_properties[st]["modularity"][i]["module_degree_zscore_ipsi_null"] = np.median(zscore_ipsi_null,axis=1)
 
                 if len(data_2d[st][str(rn)][str(cn)]["ind_contra"]) > 0:
                     zscore_contra = np.array(zscore)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_contra"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_contra"])]
                     graph_properties[st]["modularity"][i]["module_degree_zscore_contra"] = np.median(zscore_contra,axis=1)
+                    zscore_contra_null = np.array(zscore_null)[:,np.min(data_2d[st][str(rn)][str(cn)]["ind_contra"]):np.max(data_2d[st][str(rn)][str(cn)]["ind_contra"])]
+                    graph_properties[st]["modularity"][i]["module_degree_zscore_contra_null"] = np.median(zscore_contra_null,axis=1)
 
                   
                 graph_properties[st]["indices"].append(i)

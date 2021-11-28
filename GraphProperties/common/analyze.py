@@ -140,4 +140,32 @@ def mean_confidence_interval_all(data, confidence=0.95):
 
 
 
+def boxplot_bold_labels(g,g_prop,vline_prop,hline_prop):
+    #for ax in g.axes:                             
+    ax = g.axes                                    
+    ax.set_xlabel("",fontsize=25,fontweight='bold')
+    ax.set_ylabel(ax.get_ylabel(),fontsize=20,fontweight='bold')
+    if g_prop["title"] != "":
+        tit = ax.get_title().split('=')[1]         
+        ax.set_title(tit,fontsize=15,fontweight='bold') 
+         
+    for x in ax.get_xticklabels():
+        x.set_fontsize(15)
+        x.set_fontweight('bold')                   
+        #x.set_visible(False)                      
+        
+    for x in ax.get_yticklabels():
+        x.set_fontsize(15)                         
+        x.set_fontweight('bold')                   
+    
+    ylims = ax.get_ylim()
+    xlims = ax.get_xlim()
+    if vline_prop["flag"] == "y":                  
+        ax.vlines(x=vline_prop["x"],ymin=ylims[0],ymax=ylims[1],linestyles='dashed',linewidth=vline_prop["lw"],color=vline_prop["color"])                 
+        
+    if hline_prop["flag"] == "y":                  
+        ax.hlines(y=hline_prop["y"],xmin=xlims[0],xmax=xlims[1],linestyles='dashed',linewidth=hline_prop["lw"],color=hline_prop["color"])                 
+    
+    
+        
 

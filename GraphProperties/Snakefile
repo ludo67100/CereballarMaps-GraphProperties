@@ -62,7 +62,9 @@ rule all:
 		DATA_TARGET_DIR+"graph_properties_pandas_for_behav_sub_contra_ipsi_all.csv",
 		DATA_TARGET_DIR+"graph_properties_pandas_sub_contra_ipsi_all.csv",
 
-		expand(FIG_TARGET_DIRS[1]+"Figure2_Panel{N}_development.png",N=Fig2_panel_name["modularity_index"])
+
+        expand(FIG_TARGET_DIRS[1]+"Figure2_{N}_development_n.png",N=[ Fig2_panel_name[x] for x in Fig2_panel_name.keys()] )
+
 
 
 
@@ -141,7 +143,8 @@ rule collate_graph_features_development_dataframe:
         expand(DATA_TARGET_DIR+"graph_properties_pandas_for_behav_days_{seed}.csv",seed=SEEDS),
         expand(DATA_TARGET_DIR+"graph_properties_pandas_days_{seed}.csv",seed=SEEDS),
         DATA_TARGET_DIR+"graph_properties_pandas_for_behav_days_all.csv",
-        DATA_TARGET_DIR+"graph_properties_pandas_days_all.csv"
+        DATA_TARGET_DIR+"graph_properties_pandas_days_all.csv",
+        DATA_TARGET_DIR+"graph_properties_pandas_days_null_all.csv"
     run:
         shell("python common/combine_graph_props_seeds_pandas.py development")
 
@@ -170,12 +173,13 @@ rule collate_graph_features_adaptive_ipsi_contra_dataframe:
         shell("python common/combine_graph_props_ipsi_contra_seeds_pandas.py subtype")
 
 
-rule Figure2_panelH:
+rule Figure2_panelHIJK:
     input:
-        DATA_TARGET_DIR+"graph_properties_pandas_days_all.csv"
+        DATA_TARGET_DIR+"graph_properties_pandas_days_all.csv",
+        DATA_TARGET_DIR+"graph_properties_pandas_days_null_all.csv"
     output:
-        expand(FIG_TARGET_DIRS[1]+"Figure2_Panel{N}_development.png",N=Fig2_panel_name["modularity_index"])
+        expand(FIG_TARGET_DIRS[1]+"Figure2_{N}_development_n.png",N=[ Fig2_panel_name[x] for x in Fig2_panel_name.keys()] )
     run:
-        shell("python Figure2/Figure2_PanelH.py")
+        shell("python Figure2/compare_graph_props_subtype_null.py development n")
 
 
