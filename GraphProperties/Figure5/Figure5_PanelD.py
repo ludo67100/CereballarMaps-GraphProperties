@@ -166,5 +166,3 @@ for st in ["subtype"]:
     fig.legend(legs,uniq_st,loc='best',fontsize=20)
     fig.subplots_adjust(left=0.06,bottom=0.06,right=0.96,top=0.93)
     fig.savefig(fig_target_dir+"tsne_all_subtypes_"+sub_ipsi_contra+"_"+st+"_seeds.png")
-
-

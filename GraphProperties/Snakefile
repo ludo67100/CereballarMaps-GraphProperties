@@ -68,7 +68,11 @@ rule all:
         expand(DATA_TARGET_DIR+"graph_properties_with_behavior_pandas{pf}_all.csv",pf=POSTFIX),
 
 
-        expand(FIG_TARGET_DIRS[2]+"tsne_all_subtypes_{sub_ipsi_contra}_{st}_seeds.png",sub_ipsi_contra='y',st="subtype")
+        expand(FIG_TARGET_DIRS[2]+"tsne_all_subtypes_{sub_ipsi_contra}_{st}_seeds.png",sub_ipsi_contra='y',st="subtype"),
+
+        FIG_TARGET_DIRS[2]+"Accuracy_comparison_y_subtype.png",
+        FIG_TARGET_DIRS[2]+"Confusion_matrix_random_forest_y_subtype.png"
+
 
 
 
@@ -210,4 +214,13 @@ rule Figure5_panelD:
     run:
         shell("python Figure5/Figure5_PanelD.py y")
 
+rule Figure5_panelE:
+    input:
+        DATA_TARGET_DIR+"graph_properties_with_behavior_pandas_all.csv",
+        DATA_TARGET_DIR+"graph_properties_with_behavior_pandas_sub_ipsi_contra_all.csv"
+    output:
+        FIG_TARGET_DIRS[2]+"Accuracy_comparison_y_subtype.png",
+        FIG_TARGET_DIRS[2]+"Confusion_matrix_random_forest_y_subtype.png"
+    run:
+        shell("python Figure5/Figure5_PanelE.py y subtype")
 
