@@ -6,7 +6,7 @@ import random
 
 
 DATA_TARGET_DIR = "./data/"
-FIG_TARGET_DIRS = ["./Figure1/","./Figure2/","./Figure5/"]
+FIG_TARGET_DIRS = ["./Figure1/","./Figure2/","./Figure5/","./Figure6/"]
 SUBTYPES = ["EC","ENR1","ENR2","ES","LC","LS","WT"]
 DEVELOPMENT =["P9P10","P12P13","P14P18","P30P40"]
 OPTIONS = ["n","y"]
@@ -73,7 +73,10 @@ rule all:
         FIG_TARGET_DIRS[2]+"Accuracy_comparison_y_subtype.png",
         FIG_TARGET_DIRS[2]+"Confusion_matrix_random_forest_y_subtype.png",
 
-        expand(DATA_TARGET_DIR+"graph_properties_behavior_enr{pf}_all.csv",pf=POSTFIX)
+        expand(DATA_TARGET_DIR+"graph_properties_behavior_enr{pf}_all.csv",pf=POSTFIX),
+        DATA_TARGET_DIR+"Predicted_actual_scatter_points_slope_n.csv",
+        FIG_TARGET_DIRS[3]+"Predicted_actual_scatter_jittered_slope_n.png"
+
 
 
 
@@ -236,5 +239,14 @@ rule read_enrichment:
     run:
         for op in OPTIONS:
             shell("python common/read_enrichment.py {sub_ipsi_contra}".format(sub_ipsi_contra=op))
+
+rule Figure6_PanelA:
+    input:
+        DATA_TARGET_DIR+"graph_properties_behavior_enr_all.csv"
+    output:
+        DATA_TARGET_DIR+"Predicted_actual_scatter_points_slope_n.csv",
+        FIG_TARGET_DIRS[3]+"Predicted_actual_scatter_jittered_slope_n.png"
+    run:
+        shell("python Figure6/Figure6_PanelA.py")
 
 
