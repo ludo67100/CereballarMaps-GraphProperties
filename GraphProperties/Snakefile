@@ -6,7 +6,7 @@ import random
 
 
 DATA_TARGET_DIR = "./data/"
-FIG_TARGET_DIRS = ["./Figure1/","./Figure2/"]
+FIG_TARGET_DIRS = ["./Figure1/","./Figure2/","./Figure5/"]
 SUBTYPES = ["EC","ENR1","ENR2","ES","LC","LS","WT"]
 DEVELOPMENT =["P9P10","P12P13","P14P18","P30P40"]
 OPTIONS = ["n","y"]
@@ -65,7 +65,10 @@ rule all:
 
         expand(FIG_TARGET_DIRS[1]+"Figure2_{N}_development_n.png",N=[ Fig2_panel_name[x] for x in Fig2_panel_name.keys()] ),
         expand(DATA_TARGET_DIR+"behavior_features_pandas{pf}.csv",pf=POSTFIX),
-        expand(DATA_TARGET_DIR+"graph_properties_with_behavior_pandas{pf}_all.csv",pf=POSTFIX)
+        expand(DATA_TARGET_DIR+"graph_properties_with_behavior_pandas{pf}_all.csv",pf=POSTFIX),
+
+
+        expand(FIG_TARGET_DIRS[2]+"tsne_all_subtypes_{sub_ipsi_contra}_{st}_seeds.png",sub_ipsi_contra='y',st="subtype")
 
 
 
@@ -197,5 +200,14 @@ rule read_data_behavior:
     run:
         for op in OPTIONS:
             shell("python common/read_data_behavior.py {sub_ipsi_contra}".format(sub_ipsi_contra=op))
+
+
+rule Figure5_panelD:
+    input:
+        DATA_TARGET_DIR+"graph_properties_with_behavior_pandas_sub_ipsi_contra_all.csv"
+    output:
+        expand(FIG_TARGET_DIRS[2]+"tsne_all_subtypes_{sub_ipsi_contra}_{st}_seeds.png",sub_ipsi_contra='y',st="subtype")
+    run:
+        shell("python Figure5/Figure5_PanelD.py y")
 
 
